@@ -1,18 +1,18 @@
-# URL к файлу со списком
+# URL Рє С„Р°Р№Р»Сѓ СЃРѕ СЃРїРёСЃРєРѕРј
 $url = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/filelist.txt"
 
-# Задайте путь к директории для загрузки файлов
-$localDir = "C:\MyDownloads"  # Измените на вашу директорию
+# Р—Р°РґР°Р№С‚Рµ РїСѓС‚СЊ Рє РґРёСЂРµРєС‚РѕСЂРёРё РґР»СЏ Р·Р°РіСЂСѓР·РєРё С„Р°Р№Р»РѕРІ
+$localDir = "C:\MyDownloads"  # РР·РјРµРЅРёС‚Рµ РЅР° РІР°С€Сѓ РґРёСЂРµРєС‚РѕСЂРёСЋ
 
-# Создайте директорию, если её нет
+# РЎРѕР·РґР°Р№С‚Рµ РґРёСЂРµРєС‚РѕСЂРёСЋ, РµСЃР»Рё РµС‘ РЅРµС‚
 if (-not (Test-Path $localDir)) {
     New-Item -ItemType Directory -Path $localDir
 }
 
-# Загрузите список файлов
+# Р—Р°РіСЂСѓР·РёС‚Рµ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ
 $fileList = Invoke-RestMethod -Uri $url
 
-# Отобразите список файлов
+# РћС‚РѕР±СЂР°Р·РёС‚Рµ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ
 $i = 1
 $fileDict = @{}
 foreach ($file in $fileList) {
@@ -21,17 +21,11 @@ foreach ($file in $fileList) {
     $i++
 }
 
-# Запросите номер файла для запуска
-$choice = Read-Host "Введите номер файла для запуска"
+# Р—Р°РїСЂРѕСЃРёС‚Рµ РЅРѕРјРµСЂ С„Р°Р№Р»Р° РґР»СЏ Р·Р°РїСѓСЃРєР°
+$choice = Read-Host "Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ С„Р°Р№Р»Р° РґР»СЏ Р·Р°РїСѓСЃРєР°"
 if ($fileDict.ContainsKey([int]$choice)) {
     $fileToDownload = $fileDict[[int]$choice]
-    $downloadUrl = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/$fileToDownload"  # Укажите правильный путь
+    $downloadUrl = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/$fileToDownload"  # РЈРєР°Р¶РёС‚Рµ РїСЂР°РІРёР»СЊРЅС‹Р№ РїСѓС‚СЊ
 
-    # Загрузка файла
-    Invoke-WebRequest -Uri $downloadUrl -OutFile "$localDir\$fileToDownload"
-
-    # Запустите файл
-    Start-Process "$localDir\$fileToDownload"
-} else {
-    Write-Host "Неверный номер файла."
-}
+    # Р—Р°РіСЂСѓР·РєР° С„Р°Р№Р»Р°
+    Invoke-WebRequest 
