@@ -1,5 +1,5 @@
 # URL к файлу со списком
-$url = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/filelist.txt"
+$url = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/filelist.txt"  # URL к файлу со списком
 
 # Задайте путь к директории для загрузки файлов
 $localDir = "C:\MyDownloads"  # Измените на вашу директорию
