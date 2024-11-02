@@ -44,12 +44,22 @@ if ($choice -gt 0 -and $choice -lt $i) {
     # Загрузите файл
     $fileToDownload = $fileList[$choice - 1]  # Корректировка индекса
     $downloadUrl = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/$fileToDownload"  # URL к файлу
+    
+    # Вывод отладочной информации
+    Write-Host "Путь для загрузки файла: $downloadUrl"
+
     $outputPath = Join-Path -Path $localDir -ChildPath $fileToDownload
 
-    Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath
+    # Попробуйте загрузить файл
+    try {
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath
+        Write-Host "Файл загружен в: $outputPath"
 
-    # Запустите файл
-    Start-Process -FilePath $outputPath
+        # Запустите файл
+        Start-Process -FilePath $outputPath
+    } catch {
+        Write-Host "Ошибка загрузки файла: $_"
+    }
 } else {
     Write-Host "Неверный номер файла."
 }
