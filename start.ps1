@@ -1,66 +1,38 @@
-# Задайте пути к директориям для загрузки файлов
-$tempDir = "$env:TEMP\DownloadedFiles"  # Временная директория для загружаемых файлов
-$downloadsDir = [System.IO.Path]::Combine($env:USERPROFILE, "Downloads")  # Папка Загрузки по умолчанию
+function DownloadAndRun {
+    param (
+        [string]$url = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/filelist.txt"  # URL к файлу со списком
+    )
 
-# Создайте временную директорию, если её нет
-if (-not (Test-Path $tempDir)) {
-    New-Item -ItemType Directory -Path $tempDir
-}
+    # Задайте путь к директории для загрузки файлов
+    $localDir = "C:\MyDownloads"  # Измените на вашу директорию
 
-# URL к вашему файлу со списком
-$url = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/filelist.txt"  # Укажите правильный путь
-
-# Загрузите список файлов
-$fileList = Invoke-RestMethod -Uri $url
-
-# Создайте новый список файлов
-$fileNames = @()
-$i = 1
-foreach ($file in $fileList) {
-    $fileNames += "$i. $file"
-    $i++
-}
-
-# Отобразите список файлов
-Write-Host "Доступные файлы:"
-$fileNames | ForEach-Object { Write-Host $_ }
-
-# Запросите номер файла для запуска
-$choice = Read-Host "Введите номер файла"
-if ($choice -gt 0 -and $choice -lt $i) {
-    # Запросите, куда сохранить файл
-    $saveChoice = Read-Host "Выберите, куда сохранить файл (1 - Temp, 2 - Загрузки)"
-    
-    # Определите директорию сохранения
-    if ($saveChoice -eq "1") {
-        $localDir = $tempDir
-    } elseif ($saveChoice -eq "2") {
-        $localDir = $downloadsDir
-    } else {
-        Write-Host "Неверный выбор сохранения."
-        exit
+    # Создайте директорию, если её нет
+    if (-not (Test-Path $localDir)) {
+        New-Item -ItemType Directory -Path $localDir
     }
 
-    # Загрузите файл
-    $fileToDownload = $fileList[$choice - 1]  # Корректировка индекса
-    $downloadUrl = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/$fileToDownload"  # URL к файлу
-    
-    # Вывод отладочной информации
-    Write-Host "Выбранный файл для загрузки: $fileToDownload"
-    Write-Host "Полный URL для загрузки файла: $downloadUrl"
+    # Загрузите список файлов
+    $fileList = Invoke-RestMethod -Uri $url
 
-    $outputPath = Join-Path -Path $localDir -ChildPath $fileToDownload
+    # Отобразите список файлов
+    $i = 1
+    $fileDict = @{}
+    foreach ($file in $fileList) {
+        $fileDict[$i] = $file
+        Write-Host "$i. $file"
+        $i++
+    }
 
-    # Попробуйте загрузить файл
-    try {
-        Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath
-        Write-Host "Файл загружен в: $outputPath"
+    # Запросите номер файла для запуска
+    $choice = Read-Host "Введите номер файла для запуска"
+    if ($fileDict.ContainsKey([int]$choice)) {
+        $fileToDownload = $fileDict[[int]$choice]
+        $downloadUrl = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/$fileToDownload"  # Укажите правильный путь
+        Invoke-WebRequest -Uri $downloadUrl -OutFile "$localDir\$fileToDownload"
 
         # Запустите файл
-        Start-Process -FilePath $outputPath
-    } catch {
-        Write-Host "Ошибка загрузки файла: $_"
+        Start-Process "$localDir\$fileToDownload"
+    } else {
+        Write-Host "Неверный номер файла."
     }
-} else {
-    Write-Host "Неверный номер файла."
 }
