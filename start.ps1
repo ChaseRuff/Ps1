@@ -8,7 +8,7 @@ if (-not (Test-Path $tempDir)) {
 }
 
 # URL к вашему файлу со списком
-$url = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/filelist.txt"  # Укажите правильный путь
+$url = "https://raw.githubusercontent.com/ChaseRuff/Ps1/refs/heads/main/filelist.txt"  # Укажите правильный путь
 
 # Загрузите список файлов
 $fileList = Invoke-RestMethod -Uri $url
@@ -25,7 +25,7 @@ foreach ($file in $fileList) {
 $cmdCommand = "cmd.exe /k `"`"echo Введите номер файла для запуска`"; "
 $cmdCommand += $fileNames -join '; '
 $cmdCommand += "; set /p choice=Введите номер файла: "
-$cmdCommand += "if %choice% lss $i (set /p saveChoice=Выберите, куда сохранить файл (1 - Temp, 2 - Загрузки): & if %saveChoice%==1 (set localDir=%tempDir%) else (set localDir=$downloadsDir); call %localDir%\%fileList[%choice%]%) else (echo Неверный номер файла & exit)"
+$cmdCommand += "if %choice% lss $i (set /p saveChoice=Выберите, куда сохранить файл (1 - Temp, 2 - Загрузки): & if %saveChoice%==1 (set localDir=$tempDir) else (set localDir=$downloadsDir); call %localDir%\%fileList[%choice%-1%]%) else (echo Неверный номер файла & exit)"
 
 # Откройте новый экземпляр CMD и выполните команду
 Start-Process cmd.exe -ArgumentList "/c $cmdCommand"
