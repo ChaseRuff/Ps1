@@ -1,18 +1,21 @@
-# URL файла со списком
-$url = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/filelist.txt"  # URL файла со списком
+# РЈСЃС‚Р°РЅРѕРІРєР° РєРѕРґРёСЂРѕРІРєРё UTF-8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# Задаем директорию для скачивания файлов
-$localDir = "C:\MyDownloads"  # Укажите путь на нужную директорию
+# URL С„Р°Р№Р»Р° СЃРѕ СЃРїРёСЃРєРѕРј
+$url = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/filelist.txt"  # URL С„Р°Р№Р»Р° СЃРѕ СЃРїРёСЃРєРѕРј
 
-# Проверяем, существует ли директория, если нет — создаем
+# Р—Р°РґР°РµРј РґРёСЂРµРєС‚РѕСЂРёСЋ РґР»СЏ СЃРєР°С‡РёРІР°РЅРёСЏ С„Р°Р№Р»РѕРІ
+$localDir = "C:\MyDownloads"  # РЈРєР°Р¶РёС‚Рµ РїСѓС‚СЊ РЅР° РЅСѓР¶РЅСѓСЋ РґРёСЂРµРєС‚РѕСЂРёСЋ
+
+# РџСЂРѕРІРµСЂСЏРµРј, СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё РґРёСЂРµРєС‚РѕСЂРёСЏ, РµСЃР»Рё РЅРµС‚ вЂ” СЃРѕР·РґР°РµРј
 if (-not (Test-Path $localDir)) {
     New-Item -ItemType Directory -Path $localDir
 }
 
-# Скачиваем список файлов
+# РЎРєР°С‡РёРІР°РµРј СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ
 $fileList = Invoke-RestMethod -Uri $url
 
-# Отображаем список файлов
+# РћС‚РѕР±СЂР°Р¶Р°РµРј СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ
 $i = 1
 $fileDict = @{}
 foreach ($file in $fileList) {
@@ -21,15 +24,31 @@ foreach ($file in $fileList) {
     $i++
 }
 
-# Запрашиваем номер файла для скачивания
-$choice = Read-Host "Введите номер файла для скачивания"
+# Р—Р°РїСЂР°С€РёРІР°РµРј РЅРѕРјРµСЂ С„Р°Р№Р»Р° РґР»СЏ СЃРєР°С‡РёРІР°РЅРёСЏ
+$choice = Read-Host "Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ С„Р°Р№Р»Р° РґР»СЏ СЃРєР°С‡РёРІР°РЅРёСЏ"
 if ($fileDict.ContainsKey([int]$choice)) {
     $fileToDownload = $fileDict[[int]$choice]
-    $downloadUrl = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/$fileToDownload"  # Получаем прямой путь
-    Invoke-WebRequest -Uri $downloadUrl -OutFile "$localDir\$fileToDownload"
+    
+    # РЈРґР°Р»СЏРµРј РЅРµРґРѕРїСѓСЃС‚РёРјС‹Рµ СЃРёРјРІРѕР»С‹ РёР· РёРјРµРЅРё С„Р°Р№Р»Р°
+    $fileToDownload = [System.IO.Path]::GetFileName($fileToDownload)
 
-    # Запускаем файл
-    Start-Process "$localDir\$fileToDownload"
+    $downloadUrl = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/$fileToDownload"  # РџРѕР»СѓС‡Р°РµРј РїСЂСЏРјРѕР№ РїСѓС‚СЊ
+    $outputFile = "$localDir\$fileToDownload"
+
+    try {
+        # РЎРєР°С‡РёРІР°РµРј С„Р°Р№Р»
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $outputFile
+        
+        # РџСЂРѕРІРµСЂСЏРµРј, СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё С„Р°Р№Р» РїРѕСЃР»Рµ СЃРєР°С‡РёРІР°РЅРёСЏ
+        if (Test-Path $outputFile) {
+            # Р—Р°РїСѓСЃРєР°РµРј С„Р°Р№Р»
+            Start-Process $outputFile
+        } else {
+            Write-Host "РћС€РёР±РєР°: С„Р°Р№Р» РЅРµ Р±С‹Р» СЃРєР°С‡Р°РЅ."
+        }
+    } catch {
+        Write-Host "РћС€РёР±РєР° РїСЂРё СЃРєР°С‡РёРІР°РЅРёРё С„Р°Р№Р»Р°: $_"
+    }
 } else {
-    Write-Host "Некорректный номер файла."
+    Write-Host "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РЅРѕРјРµСЂ С„Р°Р№Р»Р°."
 }
