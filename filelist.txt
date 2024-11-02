@@ -1,2 +1,0 @@
-memreduct.exe
-Cleanmgr.exe
