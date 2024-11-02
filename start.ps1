@@ -1,46 +1,46 @@
-# Установите адрес репозитория
-$githubUser = "ChaseRuff"
-$repoName = "Ps1"
-$baseUrl = "https://api.github.com/repos/$githubUser/$repoName/contents"
+# РћС‚РєСЂС‹С‚С‹Р№ РґРѕСЃС‚СѓРї РІ РРЅС‚РµСЂРЅРµС‚
+$РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ github = "Р§РµР№Р·RUFF"
+$РёРјСЏ_СЂРµРїРѕ = "P.S.1"
+$Р±Р°Р·РѕРІС‹Р№ URL-Р°РґСЂРµСЃ = "https://api.github.com/repos/$РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ github/$РёРјСЏ_СЂРµРїРѕ/contents"
 
-# Получаем содержимое репозитория
-$response = Invoke-RestMethod -Uri $baseUrl -Headers @{"User-Agent" = "PowerShell"}
+# РџРѕРїС‹С‚РєР° СЃРЅРёРјРєР°
+$РѕС‚РІРµС‚ = Invoke-RestMethod -Uri $baseUrl -Headers @{"РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёР№ Р°РіРµРЅС‚" = "PowerShell"}
 
-# Создаем хэш-таблицу для файлов
-$files = @{}
+# РЎРЅРёРјРѕРє ГµГЅГё-ГІГ ГЎГ«ГЁto Г¤Г«Гї ГґГ Г©Г«Г®Гў
+$Р¤Р°Р№Р»С‹ = @{}
 
-# Обрабатываем все элементы в репозитории
-foreach ($item in $response) {
-    if ($item.type -eq "file" -and $item.name.EndsWith(".txt")) {
-        # Читаем текстовые файлы с указанием кодировки
-        $fileContent = Invoke-RestMethod -Uri $item.download_url -Headers @{"User-Agent" = "PowerShell"}
-        $fileName = $item.name
+# РџРѕСЏРІРёР»СЃСЏ РЅРѕРІС‹Р№ РІ РјРёСЂРµ
+foreach ($С‚Р°РєР¶Рµ РІ $response) {
+    РµСЃР»Рё ($item.type -eq "С„Р°Р№Р»" -Рё $item.name.EndsWith(".С‚РµРєСЃС‚")) {
+        # Г—СЌС‚Рѕ СѓРЅРёРІРµСЂСЃР°Р»СЊРЅС‹Р№ РІР°СЂРёР°РЅС‚ СЃ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊСЋ Р·Р°РїСѓСЃРєР°
+        $fileContent = Invoke-RestMethod -Uri $item.download_url -Headers @{"РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёР№ Р°РіРµРЅС‚" = "PowerShell"}
+        $РёРјСЏ_С„Р°Р№Р»Р° = $item.name
 
-        # Добавляем каждую строку файла как отдельный файл для скачивания
-        $lines = $fileContent -split "`n"
-        for ($i = 0; $i -lt $lines.Count; $i++) {
-            $files["$fileName - $($i + 1): $($lines[$i].Trim())"] = $lines[$i].Trim()
+        # Р”РѕСЂРѕРіРёРµ РґСЂСѓР·СЊСЏ, РЅРѕ СЌС‚Рѕ РЅРµ С‚Р°Рє.
+        $Р»РёРЅРёРё = $fileContent -split "`РЅ"
+        РґР»СЏ ($СЏ = 0; $СЏ -lt $lines.Count; $СЏ++) {
+            $Р¤Р°Р№Р»С‹["$РРјСЏ С„Р°Р№Р»Р° - $($СЏ + 1): $($Р»РёРЅРёРё[$i].РћР±СЂРµР·Р°С‚СЊ())"] = $Р»РёРЅРёРё[$i].РћР±СЂРµР·Р°С‚СЊ()
         }
     }
 }
 
-# Устанавливаем кодировку консоли для корректного отображения кириллицы
+# РћСЃРѕР±С‹Р№ РЅР°Р±РѕСЂ РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРІ Рё РєРѕРјРїР»РµРєС‚СѓСЋС‰РёС… РґР»СЏ СЂРµРјРѕРЅС‚Р°
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# Выводим список файлов с их номерами
-$files.GetEnumerator() | ForEach-Object { 
-    Write-Host "$($_.Key)"
+# Р’СЃС‚СЂРѕРµРЅРЅР°СЏ РІРµСЂСЃРёСЏ СЃ РµРµ РїРѕРјРѕС‰СЊСЋ
+$С„Р°Р№Р»С‹.GetEnumerator() | ForEach-РћР±СЉРµРєС‚ { 
+    Write-Host "$($_.РљР»СЋС‡)"
 }
 
-# Запрашиваем у пользователя номер файла
-$fileName = Read-Host "Введите название файла (с номером) для загрузки"
+# Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ РЅР° СЃР°Р№С‚Рµ
+$РёРјСЏ_С„Р°Р№Р»Р° = РҐРѕСЃС‚ С‡С‚РµРЅРёСЏ "Р’Р°СЂС‘Р°РµРґСЊС‘ РЅРµРЅР°Р·РІР°РЅРЅРѕРµ (СЃ РЅР°РёРјРµРЅРѕРІР°РЅРёРµРј) Рё Р·Р°РјРѕСЂРѕР¶РµРЅРЅРѕРµ"
 $fileUrl = $files[$fileName]
 
-if ($fileUrl) {
-    # Загрузка файла
-    $tempPath = Join-Path $env:TEMP $fileUrl
+РµСЃР»Рё ($fileUrl) {
+    # Р—Р°РїСЂРµС‚ РЅР° РїСЂРѕРґР°Р¶Сѓ
+    $tempPath = РџСѓС‚СЊ Рє СЃРѕРµРґРёРЅРµРЅРёСЋ $env:TEMP $fileUrl
     Invoke-WebRequest -Uri $fileUrl -OutFile $tempPath
-    Write-Host "Файл загружен: $tempPath"
-} else {
-    Write-Host "Файл не найден."
+    Write-Host "РЈ РЅР°СЃ РµСЃС‚СЊ: $С‚РµРјРїРџР°С‚"
+} Р•С‰Рµ {
+    Write-Host "РўС‹РЅ Рё РёРјСЊСЏСЂРё."
 }
