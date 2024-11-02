@@ -28,4 +28,10 @@ if ($fileDict.ContainsKey([int]$choice)) {
     $downloadUrl = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/$fileToDownload"  # Укажите правильный путь
 
     # Загрузка файла
-    Invoke-WebRequest 
+    Invoke-WebRequest -Uri $downloadUrl -OutFile "$localDir\$fileToDownload"
+
+    # Запустите файл
+    Start-Process "$localDir\$fileToDownload"
+} else {
+    Write-Host "Неверный номер файла."
+}
