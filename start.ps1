@@ -46,7 +46,8 @@ if ($choice -gt 0 -and $choice -lt $i) {
     $downloadUrl = "https://raw.githubusercontent.com/ChaseRuff/Ps1/main/$fileToDownload"  # URL к файлу
     
     # Вывод отладочной информации
-    Write-Host "Путь для загрузки файла: $downloadUrl"
+    Write-Host "Выбранный файл для загрузки: $fileToDownload"
+    Write-Host "Полный URL для загрузки файла: $downloadUrl"
 
     $outputPath = Join-Path -Path $localDir -ChildPath $fileToDownload
 
