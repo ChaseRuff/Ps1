@@ -1,1 +1,2 @@
 memreduct.exe
+windirstat1_1_2_setup.exe
